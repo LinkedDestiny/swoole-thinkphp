@@ -1,0 +1,42 @@
+[ 2014-11-13T14:49:12+08:00 ]  
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000045s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000674s ]
+NOTIC: [8] Undefined index: REQUEST_METHOD /home/lancelot/Project/swoole-tp/ThinkPHP/Library/Think/App.class.php 第 28 行.
+NOTIC: [8] Undefined index: REQUEST_URI /home/lancelot/Project/swoole-tp/ThinkPHP/Library/Think/Dispatcher.class.php 第 135 行.
+NOTIC: [8] Use of undefined constant _PHP_FILE_ - assumed '_PHP_FILE_' /home/lancelot/Project/swoole-tp/ThinkPHP/Library/Think/Dispatcher.class.php 第 185 行.
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000694s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000790s ]
+
+[ 2014-11-13T14:49:13+08:00 ]  
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000033s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000612s ]
+NOTIC: [8] Undefined index: REQUEST_METHOD /home/lancelot/Project/swoole-tp/ThinkPHP/Library/Think/App.class.php 第 28 行.
+NOTIC: [8] Undefined index: REQUEST_URI /home/lancelot/Project/swoole-tp/ThinkPHP/Library/Think/Dispatcher.class.php 第 135 行.
+NOTIC: [8] Use of undefined constant _PHP_FILE_ - assumed '_PHP_FILE_' /home/lancelot/Project/swoole-tp/ThinkPHP/Library/Think/Dispatcher.class.php 第 185 行.
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000539s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000601s ]
+
+[ 2014-11-13T15:58:57+08:00 ] 127.0.0.1 /favicon.ico
+INFO: [ app_init ] --START--
+INFO: Run Behavior\BuildLiteBehavior [ RunTime:0.000025s ]
+INFO: [ app_init ] --END-- [ RunTime:0.000648s ]
+NOTIC: [8] Use of undefined constant _PHP_FILE_ - assumed '_PHP_FILE_' /home/lancelot/Project/swoole-tp/ThinkPHP/Library/Think/Dispatcher.class.php 第 178 行.
+INFO: [ app_begin ] --START--
+INFO: Run Behavior\ReadHtmlCacheBehavior [ RunTime:0.000533s ]
+INFO: [ app_begin ] --END-- [ RunTime:0.000601s ]
+NOTIC: [8] Constant MEMORY_LIMIT_ON already defined /home/lancelot/Project/swoole-tp/ThinkPHP/ThinkPHP.php 第 19 行.
+NOTIC: [8] Constant THINK_VERSION already defined /home/lancelot/Project/swoole-tp/ThinkPHP/ThinkPHP.php 第 23 行.
+NOTIC: [8] Constant URL_COMMON already defined /home/lancelot/Project/swoole-tp/ThinkPHP/ThinkPHP.php 第 26 行.
+NOTIC: [8] Constant URL_PATHINFO already defined /home/lancelot/Project/swoole-tp/ThinkPHP/ThinkPHP.php 第 27 行.
+NOTIC: [8] Constant URL_REWRITE already defined /home/lancelot/Project/swoole-tp/ThinkPHP/ThinkPHP.php 第 28 行.
+NOTIC: [8] Constant URL_COMPAT already defined /home/lancelot/Project/swoole-tp/ThinkPHP/ThinkPHP.php 第 29 行.
+NOTIC: [8] Constant EXT already defined /home/lancelot/Project/swoole-tp/ThinkPHP/ThinkPHP.php 第 32 行.
+NOTIC: [8] Constant MAGIC_QUOTES_GPC already defined /home/lancelot/Project/swoole-tp/ThinkPHP/ThinkPHP.php 第 70 行.
+NOTIC: [8] Constant IS_CGI already defined /home/lancelot/Project/swoole-tp/ThinkPHP/ThinkPHP.php 第 72 行.
+NOTIC: [8] Constant IS_WIN already defined /home/lancelot/Project/swoole-tp/ThinkPHP/ThinkPHP.php 第 73 行.
+NOTIC: [8] Constant IS_CLI already defined /home/lancelot/Project/swoole-tp/ThinkPHP/ThinkPHP.php 第 74 行.
+
