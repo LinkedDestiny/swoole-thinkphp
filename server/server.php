@@ -56,7 +56,7 @@ class HttpServer
 
 			ob_start();
 
-			require './ThinkPHP/ThinkPHP.php';
+			require_once './ThinkPHP/ThinkPHP.php';
 			
 		    $result = ob_get_contents();
 
