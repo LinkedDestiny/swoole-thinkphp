@@ -1,10 +1,9 @@
 <html>
 <body>
-
-<?php 
-echo ( $SERVER['PATH_INFO'] );
-?>
-<p>Hello <?php echo $name?></p>
+<head>
+    <meta charset="utf-8">
+</head>
+<p>Hello</p>
 <form action="__URL__/form" method="post">
   <p>First name: <input type="text" name="fname" id="fname" /></p>
   <p>Last name: <input type="text" name="lname" id="lname" /></p>
@@ -13,5 +12,6 @@ echo ( $SERVER['PATH_INFO'] );
 
 <p>请单击确认按钮</p>
 <a href="__APP__/Home/Form/index/name/hello">click</a>
+<a href="{:U('Form/index?name=form')}">link2</a>
 </body>
 </html>
