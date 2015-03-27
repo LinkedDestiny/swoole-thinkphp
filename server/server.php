@@ -12,7 +12,7 @@ class HttpServer
 	private $application;
 
 	public function __construct() {
-		$http = new swoole_http_server("127.0.0.1", 9501);
+		$http = new swoole_http_server("0.0.0.0", 9501);
 
 		$http->set(
 			array(
@@ -47,13 +47,13 @@ class HttpServer
 					$_POST[ $key ] = $value;
 				}
 			}
-
+            /*
 			$uri = explode( "?", $_SERVER['REQUEST_URI'] );
 			$_SERVER["PATH_INFO"] = $uri[0];
 			if( isset( $uri[1] ) ) {
 				$_SERVER['QUERY_STRING'] = $uri[1];
-			}
-
+			}*/
+            $_SERVER['argv'][1]=$_SERVER["PATH_INFO"];
 			ob_start();
 
 			require_once './ThinkPHP/ThinkPHP.php';
@@ -69,7 +69,7 @@ class HttpServer
 
 	public function onWorkerStart() {
 		define('APP_DEBUG',True);
-
+        define('_PHP_FILE_','');
 		define('APP_PATH','./Application/');
 	}
 
