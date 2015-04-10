@@ -19,6 +19,7 @@ php server/server.php
 ##**使用说明**
 因为目前还没有找到支持PATH_INFO的方法，因此URL_MODE使用了兼容模式。
 在跳转到其他Controller时，需要指定Module，例如`__APP__/Home/Form/index/name/hello`,其中Home为Module名，Form为Controller名，index为方法名，name为get参数名，hello为参数值。
+**经过修正，目前已支持PATH_INFO方法。**
 
 目前本人还没有进行大规模的适配性测试，此项目仅适用于功能测试，如用于线上环境造成严重后果别怪我没提醒你……
 
