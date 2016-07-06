@@ -16,8 +16,8 @@ class HttpServer
 
 		$http->set(
 			array(
-				'worker_num' => 1,
-				'daemonize' => false,
+				'worker_num' => 16,
+				'daemonize' => 0,
 	            'max_request' => 10000,
 	            'dispatch_mode' => 1
 			)
@@ -88,7 +88,7 @@ class HttpServer
 	}
 
 	public function onWorkerStart() {
-		define('APP_DEBUG',True);
+		define('APP_DEBUG',False);
         define('_PHP_FILE_','');
 		define('APP_PATH',__DIR__.'/../Application/');
         require_once '../ThinkPHP/ThinkPHP.php';

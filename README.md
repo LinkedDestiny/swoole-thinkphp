@@ -35,6 +35,8 @@ runkit扩展 >= 0.7.0
 
 ## ThinkPHP改造
 
+注释`ThinkPHP/Library/Think/Think.class.php`的120行
+
 全局替换 `ThinkPHP/Library/Think` 目录下的所有`define`为`runkit_constant_redefine` (注意: 一些常量的define可以不修改)<br>
 修改`ThinkPHP/ThinkPHP.php`中的
 
