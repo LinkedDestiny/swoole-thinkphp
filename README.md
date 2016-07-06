@@ -45,3 +45,67 @@ define('IS_CLI',PHP_SAPI=='cli'? 1   :   0);
 ```php
 define('IS_CLI' , 0);
 ```
+
+修改`ThinkPHP/Library/Think/Controller.class.php`文件中的ajaxReturn方法:
+```php
+protected function ajaxReturn($data,$type='',$json_option=0) {
+    if(empty($type)) $type  =   C('DEFAULT_AJAX_RETURN');
+    switch (strtoupper($type)){
+        case 'JSON' :
+            // 返回JSON数据格式到客户端 包含状态信息
+            header('Content-Type:application/json; charset=utf-8');
+            echo json_encode($data,$json_option);
+            return;
+        case 'XML'  :
+            // 返回xml格式数据
+            header('Content-Type:text/xml; charset=utf-8');
+            echo xml_encode($data);
+            return;
+        case 'JSONP':
+            // 返回JSON数据格式到客户端 包含状态信息
+            header('Content-Type:application/json; charset=utf-8');
+            $handler  =   isset($_GET[C('VAR_JSONP_HANDLER')]) ? $_GET[C('VAR_JSONP_HANDLER')] : C('DEFAULT_JSONP_HANDLER');
+            echo $handler.'('.json_encode($data,$json_option).');';
+            return;
+        case 'EVAL' :
+            // 返回可执行的js脚本
+            header('Content-Type:text/html; charset=utf-8');
+            echo($data);
+            return;
+        default     :
+            // 用于扩展其他返回格式数据
+            Hook::listen('ajax_return',$data);
+    }
+}
+```
+
+修改同一文件下`dispatchJump`方法,去掉末尾的exit
+
+修改`ThinkPHP/Common/functions.php`文件中的`redirect`方法:
+```php
+function redirect($url, $time=0, $msg='') {
+    //多行URL地址支持
+    $url        = str_replace(array("\n", "\r"), '', $url);
+    if (empty($msg))
+        $msg    = "系统将在{$time}秒之后自动跳转到{$url}！";
+    if (!headers_sent()) {
+        // redirect
+        if (0 === $time) {
+            header('Location: ' . $url);
+        } else {
+            header("refresh:{$time};url={$url}");
+            echo($msg);
+        }
+        return;
+    } else {
+        $str    = "<meta http-equiv='Refresh' content='{$time};URL={$url}'>";
+        if ($time != 0)
+            $str .= $msg;
+        echo($str);
+        return;
+    }
+}
+```
+
+> 注意: 以上函数修改完之后调用不再会终止流程,需要在调用后显示调用return起到返回作用
+
