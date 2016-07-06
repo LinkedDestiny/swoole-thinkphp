@@ -16,7 +16,7 @@ class HttpServer
 
 		$http->set(
 			array(
-				'worker_num' => 16,
+				'worker_num' => 1,
 				'daemonize' => false,
 	            'max_request' => 10000,
 	            'dispatch_mode' => 1
@@ -27,24 +27,39 @@ class HttpServer
 
 		$http->on('request', function ($request, $response) {
 			if( isset($request->server) ) {
-				HttpServer::$server = $request->server;
 				foreach ($request->server as $key => $value) {
+                    unset($_SERVER[ strtoupper($key) ]);
 					$_SERVER[ strtoupper($key) ] = $value;
 				}
 			}
 			if( isset($request->header) ) {
-				HttpServer::$header = $request->header;
+				foreach ($request->header as $key => $value) {
+                    unset($_SERVER[ strtoupper($key) ]);
+					$_SERVER[ strtoupper($key) ] = $value;
+				}
 			}
+            unset($_GET);
 			if( isset($request->get) ) {
-				HttpServer::$get = $request->get;
 				foreach ($request->get as $key => $value) {
 					$_GET[ $key ] = $value;
 				}
 			}
+            unset($_POST);
 			if( isset($request->post) ) {
-				HttpServer::$post = $request->post;
 				foreach ($request->post as $key => $value) {
 					$_POST[ $key ] = $value;
+				}
+			}
+            unset($_COOKIE);
+			if( isset($request->cookie) ) {
+				foreach ($request->cookie as $key => $value) {
+					$_COOKIE[ $key ] = $value;
+				}
+			}
+            unset($_FILES);
+			if( isset($request->files) ) {
+				foreach ($request->files as $key => $value) {
+					$_FILES[ $key ] = $value;
 				}
 			}
             /*
@@ -53,11 +68,16 @@ class HttpServer
 			if( isset( $uri[1] ) ) {
 				$_SERVER['QUERY_STRING'] = $uri[1];
 			}*/
+            $_SERVER["PATH_INFO"] = explode('/', $_SERVER["PATH_INFO"],3)[2];
             $_SERVER['argv'][1]=$_SERVER["PATH_INFO"];
+
 			ob_start();
 
-			require_once './ThinkPHP/ThinkPHP.php';
-			
+            // 记录加载文件时间
+            G('loadTime');
+            // 运行应用
+            \Think\App::run();
+
 		    $result = ob_get_contents();
 
 		  	ob_end_clean();
@@ -70,7 +90,8 @@ class HttpServer
 	public function onWorkerStart() {
 		define('APP_DEBUG',True);
         define('_PHP_FILE_','');
-		define('APP_PATH','./Application/');
+		define('APP_PATH',__DIR__.'/../Application/');
+        require_once '../ThinkPHP/ThinkPHP.php';
 	}
 
 	public static function getInstance() {

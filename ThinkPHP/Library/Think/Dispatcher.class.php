@@ -38,7 +38,7 @@ class Dispatcher {
         if(C('APP_SUB_DOMAIN_DEPLOY')) {
             $rules      = C('APP_SUB_DOMAIN_RULES');
             if(isset($rules[$_SERVER['HTTP_HOST']])) { // 完整域名或者IP配置
-                define('APP_DOMAIN',$_SERVER['HTTP_HOST']); // 当前完整域名
+                runkit_constant_redefine('APP_DOMAIN',$_SERVER['HTTP_HOST']); // 当前完整域名
                 $rule = $rules[APP_DOMAIN];
             }else{
                 if(strpos(C('APP_DOMAIN_SUFFIX'),'.')){ // com.cn net.cn 
@@ -48,7 +48,7 @@ class Dispatcher {
                 }
                 if(!empty($domain)) {
                     $subDomain = implode('.', $domain);
-                    define('SUB_DOMAIN',$subDomain); // 当前完整子域名
+                    runkit_constant_redefine('SUB_DOMAIN',$subDomain); // 当前完整子域名
                     $domain2   = array_pop($domain); // 二级域名
                     if($domain) { // 存在三级域名
                         $domain3 = array_pop($domain);
@@ -72,12 +72,12 @@ class Dispatcher {
                 }
                 $array      =   explode('/',$rule);
                 // 模块绑定
-                define('BIND_MODULE',array_shift($array));
+                runkit_constant_redefine('BIND_MODULE',array_shift($array));
                 // 控制器绑定         
                 if(!empty($array)) {
                     $controller  =   array_shift($array);
                     if($controller){
-                        define('BIND_CONTROLLER',$controller);
+                        runkit_constant_redefine('BIND_CONTROLLER',$controller);
                     }
                 }
                 if(isset($vars)) { // 传入参数
@@ -109,40 +109,44 @@ class Dispatcher {
         }
 
         $depr = C('URL_PATHINFO_DEPR');
-        define('MODULE_PATHINFO_DEPR',  $depr);
+        runkit_constant_redefine('MODULE_PATHINFO_DEPR',  $depr);
 
         if(empty($_SERVER['PATH_INFO'])) {
             $_SERVER['PATH_INFO'] = '';
-            define('__INFO__','');
-            define('__EXT__','');
+            runkit_constant_redefine('__INFO__','');
+            runkit_constant_redefine('__EXT__','');
         }else{
-            define('__INFO__',trim($_SERVER['PATH_INFO'],'/'));
+            runkit_constant_redefine('__INFO__',trim($_SERVER['PATH_INFO'],'/'));
             // URL后缀
-            define('__EXT__', strtolower(pathinfo($_SERVER['PATH_INFO'],PATHINFO_EXTENSION)));
+            runkit_constant_redefine('__EXT__', strtolower(pathinfo($_SERVER['PATH_INFO'],PATHINFO_EXTENSION)));
             $_SERVER['PATH_INFO'] = __INFO__;     
-            if (__INFO__ && !defined('BIND_MODULE') && C('MULTI_MODULE')){ // 获取模块名
-                $paths      =   explode($depr,__INFO__,2);
-                $allowList  =   C('MODULE_ALLOW_LIST'); // 允许的模块列表
-                $module     =   preg_replace('/\.' . __EXT__ . '$/i', '',$paths[0]);
-                if( empty($allowList) || (is_array($allowList) && in_array_case($module, $allowList))){
-                    $_GET[$varModule]       =   $module;
-                    $_SERVER['PATH_INFO']   =   isset($paths[1])?$paths[1]:'';
+            if(!defined('BIND_MODULE') && (!C('URL_ROUTER_ON') || !Route::check())){
+                if (__INFO__ && C('MULTI_MODULE')){ // 获取模块名
+                    $paths      =   explode($depr,__INFO__,2);
+                    $allowList  =   C('MODULE_ALLOW_LIST'); // 允许的模块列表
+                    $module     =   preg_replace('/\.' . __EXT__ . '$/i', '',$paths[0]);
+                    if( empty($allowList) || (is_array($allowList) && in_array_case($module, $allowList))){
+                        $_GET[$varModule]       =   $module;
+                        $_SERVER['PATH_INFO']   =   isset($paths[1])?$paths[1]:'';
+                    }
                 }
-            }                   
+            }             
         }
 
         // URL常量
-        define('__SELF__',strip_tags($_SERVER[C('URL_REQUEST_URI')]));
+        runkit_constant_redefine('__SELF__',strip_tags($_SERVER[C('URL_REQUEST_URI')]));
 
         // 获取模块名称
-        define('MODULE_NAME', defined('BIND_MODULE')? BIND_MODULE : self::getModule($varModule));
+        runkit_constant_redefine('MODULE_NAME', defined('BIND_MODULE')? BIND_MODULE : self::getModule($varModule));
         
         // 检测模块是否存在
         if( MODULE_NAME && (defined('BIND_MODULE') || !in_array_case(MODULE_NAME,C('MODULE_DENY_LIST')) ) && is_dir(APP_PATH.MODULE_NAME)){
             // 定义当前模块路径
-            define('MODULE_PATH', APP_PATH.MODULE_NAME.'/');
+            runkit_constant_redefine('MODULE_PATH', APP_PATH.MODULE_NAME.'/');
             // 定义当前模块的模版缓存路径
             C('CACHE_PATH',CACHE_PATH.MODULE_NAME.'/');
+            // 定义当前模块的日志目录
+	        C('LOG_PATH',  realpath(LOG_PATH).'/'.MODULE_NAME.'/');
 
             // 模块检测
             Hook::listen('module_check');
@@ -166,6 +170,8 @@ class Dispatcher {
             // 加载模块函数文件
             if(is_file(MODULE_PATH.'Common/function.php'))
                 include MODULE_PATH.'Common/function.php';
+            
+            $urlCase        =   C('URL_CASE_INSENSITIVE');
             // 加载模块的扩展配置文件
             load_ext_file(MODULE_PATH);
         }else{
@@ -175,21 +181,21 @@ class Dispatcher {
         if(!defined('__APP__')){
 	        $urlMode        =   C('URL_MODEL');
 	        if($urlMode == URL_COMPAT ){// 兼容模式判断
-	            define('PHP_FILE',_PHP_FILE_.'?'.$varPath.'=');
+	            runkit_constant_redefine('PHP_FILE',_PHP_FILE_.'?'.$varPath.'=');
 	        }elseif($urlMode == URL_REWRITE ) {
 	            $url    =   dirname(_PHP_FILE_);
 	            if($url == '/' || $url == '\\')
 	                $url    =   '';
-	            define('PHP_FILE',$url);
+	            runkit_constant_redefine('PHP_FILE',$url);
 	        }else {
-	            define('PHP_FILE',_PHP_FILE_);
+	            runkit_constant_redefine('PHP_FILE',_PHP_FILE_);
 	        }
 	        // 当前应用地址
-	        define('__APP__',strip_tags(PHP_FILE));
+	        runkit_constant_redefine('__APP__',strip_tags(PHP_FILE));
 	    }
         // 模块URL地址
         $moduleName    =   defined('MODULE_ALIAS')? MODULE_ALIAS : MODULE_NAME;
-        define('__MODULE__',(defined('BIND_MODULE') || !C('MULTI_MODULE'))? __APP__ : __APP__.'/'.($urlCase ? strtolower($moduleName) : $moduleName));
+        runkit_constant_redefine('__MODULE__',(defined('BIND_MODULE') || !C('MULTI_MODULE'))? __APP__ : __APP__.'/'.($urlCase ? strtolower($moduleName) : $moduleName));
 
         if('' != $_SERVER['PATH_INFO'] && (!C('URL_ROUTER_ON') ||  !Route::check()) ){   // 检测路由规则 如果没有则按默认规则调度URL
             Hook::listen('path_info');
@@ -228,27 +234,27 @@ class Dispatcher {
             $_GET   =  array_merge($var,$_GET);
         }
         // 获取控制器的命名空间（路径）
-        define('CONTROLLER_PATH',   self::getSpace($varAddon,$urlCase));
+        runkit_constant_redefine('CONTROLLER_PATH',   self::getSpace($varAddon,$urlCase));
         // 获取控制器和操作名
-        define('CONTROLLER_NAME',   defined('BIND_CONTROLLER')? BIND_CONTROLLER : self::getController($varController,$urlCase));
-        define('ACTION_NAME',       defined('BIND_ACTION')? BIND_ACTION : self::getAction($varAction,$urlCase));
+        runkit_constant_redefine('CONTROLLER_NAME',   defined('BIND_CONTROLLER')? BIND_CONTROLLER : self::getController($varController,$urlCase));
+        runkit_constant_redefine('ACTION_NAME',       defined('BIND_ACTION')? BIND_ACTION : self::getAction($varAction,$urlCase));
 
         // 当前控制器的UR地址
         $controllerName    =   defined('CONTROLLER_ALIAS')? CONTROLLER_ALIAS : CONTROLLER_NAME;
-        define('__CONTROLLER__',__MODULE__.$depr.(defined('BIND_CONTROLLER')? '': ( $urlCase ? parse_name($controllerName) : $controllerName )) );
+        runkit_constant_redefine('__CONTROLLER__',__MODULE__.$depr.(defined('BIND_CONTROLLER')? '': ( $urlCase ? parse_name($controllerName) : $controllerName )) );
 
         // 当前操作的URL地址
-        define('__ACTION__',__CONTROLLER__.$depr.(defined('ACTION_ALIAS')?ACTION_ALIAS:ACTION_NAME));
+        runkit_constant_redefine('__ACTION__',__CONTROLLER__.$depr.(defined('ACTION_ALIAS')?ACTION_ALIAS:ACTION_NAME));
 
         //保证$_REQUEST正常取值
-        $_REQUEST = array_merge($_POST,$_GET);
+        $_REQUEST = array_merge($_POST,$_GET,$_COOKIE);	// -- 加了$_COOKIE.  保证哦..
     }
 
     /**
      * 获得控制器的命名空间路径 便于插件机制访问
      */
     static private function getSpace($var,$urlCase) {
-        $space  =   !empty($_GET[$var])?ucfirst($var).'\\'.strip_tags($_GET[$var]):'';
+        $space  =   !empty($_GET[$var])?strip_tags($_GET[$var]):'';
         unset($_GET[$var]);
         return $space;
     }
@@ -262,7 +268,7 @@ class Dispatcher {
         if($maps = C('URL_CONTROLLER_MAP')) {
             if(isset($maps[strtolower($controller)])) {
                 // 记录当前别名
-                define('CONTROLLER_ALIAS',strtolower($controller));
+                runkit_constant_redefine('CONTROLLER_ALIAS',strtolower($controller));
                 // 获取实际的控制器名
                 return   ucfirst($maps[CONTROLLER_ALIAS]);
             }elseif(array_search(strtolower($controller),$maps)){
@@ -291,7 +297,7 @@ class Dispatcher {
                 $maps =   $maps[strtolower(CONTROLLER_NAME)];
                 if(isset($maps[strtolower($action)])) {
                     // 记录当前别名
-                    define('ACTION_ALIAS',strtolower($action));
+                    runkit_constant_redefine('ACTION_ALIAS',strtolower($action));
                     // 获取实际的操作名
                     if(is_array($maps[ACTION_ALIAS])){
                         parse_str($maps[ACTION_ALIAS][1],$vars);
@@ -319,7 +325,7 @@ class Dispatcher {
         if($maps = C('URL_MODULE_MAP')) {
             if(isset($maps[strtolower($module)])) {
                 // 记录当前别名
-                define('MODULE_ALIAS',strtolower($module));
+                runkit_constant_redefine('MODULE_ALIAS',strtolower($module));
                 // 获取实际的模块名
                 return   ucfirst($maps[MODULE_ALIAS]);
             }elseif(array_search(strtolower($module),$maps)){

@@ -5,7 +5,7 @@ use Think\Upload\Driver\Bcs\BCS_RequestCore;
 use Think\Upload\Driver\Bcs\BCS_ResponseCore;
 
 if (! defined ( 'BCS_API_PATH' )) {
-	define ( 'BCS_API_PATH', dirname ( __FILE__ ) );
+	runkit_constant_redefine ( 'BCS_API_PATH', dirname ( __FILE__ ) );
 }
 
 //AK 公钥
