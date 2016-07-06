@@ -35,11 +35,11 @@ runkit扩展 >= 0.7.0
 
 ## ThinkPHP改造
 
-全局替换 `ThinkPHP/Library/Think` 目录下的所有`define`为`runkit_constant_redefine` (注意: 一些常量的define可以不修改)
+全局替换 `ThinkPHP/Library/Think` 目录下的所有`define`为`runkit_constant_redefine` (注意: 一些常量的define可以不修改)<br>
 修改`ThinkPHP/ThinkPHP.php`中的
 
 ```php
-define('IS_CLI',PHP_SAPI=='cli'? 0   :   0);
+define('IS_CLI',PHP_SAPI=='cli'? 1   :   0);
 ```
 为
 ```php
